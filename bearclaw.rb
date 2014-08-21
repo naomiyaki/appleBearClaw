@@ -1,5 +1,13 @@
 #!/usr/bin/ruby
 @appCommand = "bearclaw"
+@appSourceURI = "https://github.com/naomiyaki/#{@appCommand}"
+@appInstructions = "
+Usage: #{@appCommand} [list] : Lists available test browsers and their shortcuts
+                [browser shortcuts (IE: c f s ie11)] : Shortcuts for each browser you wish to test, separated by spaces
+                [all] : Test on all browsers 
+
+Currently, browsers/browser locations are configured in source.
+Thanks for trying out Bear Claw! Source code and more info is available at #{@appSourceURI}"
 
 @browsers = {
   "c" => "Google\\ Chrome",
@@ -13,6 +21,18 @@
   "ie11" => "~/Development/WindowsVMs/IE11\\ -\\ Win8.1.vmwarevm/Applications/Internet\\ Explorer\\ —\\ IE11\\ -\\ Win8.1.app/"
 }
 
+def listBrowsers
+  @browsers.each do |key, value|
+    puts "#{key}: #{value}\n"
+  end
+end
+
+def getUrls
+  puts "URL(s) to Test: "
+  urls = $stdin.gets.split(/,+ |,| /)
+  urls
+end
+
 def selectBrowsers(userArgs)
   testBrowsers = []
   userArgs.each do |a|
@@ -23,12 +43,6 @@ def selectBrowsers(userArgs)
     end
   end
   testBrowsers
-end
-
-def getUrls
-  puts "URL(s) to Test: "
-  urls = $stdin.gets.split(/,+ |,| /)
-  urls
 end
 
 def openURLs(selectedBrowsers, urls)
@@ -44,10 +58,14 @@ end
 # Reduce global variables and stuff
 
 def run
-  if ARGV[0] == "all"
+  if ARGV.length == 0
+    puts @appInstructions
+  elsif ARGV[0] == "all"
     allBrowsers = []
     @browsers.each_key {|key| allBrowsers.push(key)}
     openURLs(selectBrowsers(allBrowsers), getUrls)
+  elsif ARGV[0] == "list"
+    listBrowsers
   else
     openURLs(selectBrowsers(ARGV), getUrls)
   end
