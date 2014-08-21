@@ -1,0 +1,8 @@
+# Compiled source #
+###################
+*.app
+appleBearClaw.app
+
+# Executable #
+##############
+bearclaw
