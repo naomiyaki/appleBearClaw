@@ -6,13 +6,13 @@ The browser testing utility I always wanted: Open a whole bunch of URLs in as ma
 *for example:*
 ```bearclaw test http://naomirub.in http://google.com -cfs```
 :point_up: Will open naomirub.in and google.com in Chrome, Firefox, and Safari all at once
-Thanks to [Thor](http://whatisthor.com/), Bear Claw works pretty much like any old command line utility. It has a few other instructational commands like "list" and "usage"
+Thanks to [Thor](http://whatisthor.com/), Bear Claw works pretty much like any old command line utility. It has a few other instructational commands like "list" and "usage" too.
 
 ## Requirements
 Bearclaw requires Ruby and the [Thor gem](http://whatisthor.com/).
 If you don't have Thor, you can install it with ```gem install thor```
 Or run ```bundle install``` inside this repo.
-The list of browsers you can use is currently set up for Mac defaults and IE on VMWare. This is configurable in source. In the next version I'm hoping to support a configuration file for this (and Linux!).
+The list of browsers you can use is currently set up for Mac defaults and IE on VMWare. This is configurable in source. In the next version I'm hoping to build-in a configuration file for this (and Linux support!).
 
 ## Installation
 To try out the app, simply clone the repo, cd into the folder and go: 
