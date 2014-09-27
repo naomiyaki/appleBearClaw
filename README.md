@@ -5,7 +5,8 @@ The browser testing utility I always wanted: Open a whole bunch of URLs in as ma
 ```bearclaw test [a space separated list of urls] [options]```    
 *for example:*    
 ```bearclaw test http://naomirub.in http://google.com -cfs```    
-:point_up: Will open naomirub.in and google.com in Chrome, Firefox, and Safari all at once    
+:point_up: Will open naomirub.in and google.com in Chrome, Firefox, and Safari all at once
+
 Thanks to [Thor](http://whatisthor.com/), Bear Claw works pretty much like any old command line utility. It has a few other instructational commands like "list" and "usage" too.
 
 ## Requirements
