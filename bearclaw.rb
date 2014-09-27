@@ -1,74 +1,81 @@
 #!/usr/bin/ruby
-@appCommand = "bearclaw"
-@appSourceURI = "https://github.com/naomiyaki/#{@appCommand}"
-@appInstructions = "
-Usage: #{@appCommand} [list] : Lists available test browsers and their shortcuts
-                [browser shortcuts (IE: c f s ie11)] : Shortcuts for each browser you wish to test, separated by spaces
-                [all] : Test on all browsers 
+require "thor"
 
-Currently, browsers/browser locations are configured in source.
-Thanks for trying out Bear Claw! Source code and more info is available at #{@appSourceURI}"
+class BearPaw < Thor
+  @@browsers = {
+    "c" => "Google\\ Chrome",
+    "C" => "Google\\ Chrome\\ Canary",
+    "f" => "Firefox",
+    "s" => "Safari",
+    "o" => "Opera",
+    "e" => "~/Development/WindowsVMs/IE8_Win7.vmwarevm/Applications/Internet\\ Explorer\\ —\\ IE8\\ -\\ Win7.app/",
+    "n" => "~/Development/WindowsVMs/IE9_Win7.vmwarevm/Applications/Internet\\ Explorer\\ —\\ IE9\\ -\\ Win7.app/",
+    "t" => "~/Development/WindowsVMs/IE10\\ -\\ Win8.vmwarevm/Applications/Internet\\ Explorer\\ —\\ IE10\\ -\\ Win8.app/",
+    "E" => "~/Development/WindowsVMs/IE11\\ -\\ Win8.1.vmwarevm/Applications/Internet\\ Explorer\\ —\\ IE11\\ -\\ Win8.1.app/"
+  }
 
-@browsers = {
-  "c" => "Google\\ Chrome",
-  "cc" => "Google\\ Chrome\\ Canary",
-  "f" => "Firefox",
-  "s" => "Safari",
-  "o" => "Opera",
-  "ie8" => "~/Development/WindowsVMs/IE8_Win7.vmwarevm/Applications/Internet\\ Explorer\\ —\\ IE8\\ -\\ Win7.app/",
-  "ie9" => "~/Development/WindowsVMs/IE9_Win7.vmwarevm/Applications/Internet\\ Explorer\\ —\\ IE9\\ -\\ Win7.app/",
-  "ie10" => "~/Development/WindowsVMs/IE10\\ -\\ Win8.vmwarevm/Applications/Internet\\ Explorer\\ —\\ IE10\\ -\\ Win8.app/",
-  "ie11" => "~/Development/WindowsVMs/IE11\\ -\\ Win8.1.vmwarevm/Applications/Internet\\ Explorer\\ —\\ IE11\\ -\\ Win8.1.app/"
-}
-
-def listBrowsers
-  @browsers.each do |key, value|
-    puts "#{key}: #{value}\n"
+  # Testing UI
+  desc "test [urls] [browsers]", "Open one or more [urls] in one or many [browsers]"
+  # Generate individual browser options
+  @@browsers.each do |key, value|
+    method_option key.to_sym
   end
-end
 
-def getUrls
-  puts "URL(s) to Test: "
-  urls = $stdin.gets.split(/,+ |,| /)
-  urls
-end
+  # Catch all options
+  method_option :A
+  method_option :all
 
-def selectBrowsers(userArgs)
-  testBrowsers = []
-  userArgs.each do |a|
-    if @browsers[a] != nil
-      testBrowsers.push(@browsers[a])
+  def test(*urls)
+    @testBrowsers = [];
+    if options[:A] or options[:all]
+      @testBrowsers = @@browsers.values
     else
-      puts "No browsers correspond to key #{a}. Run #{@appCommand} list to see available browsers and their keys" 
+      @@browsers.each do |key, value|
+        @testBrowsers.push value if options[key.to_sym]
+      end
+    end
+    openURLs(@testBrowsers, urls)
+  end
+
+  no_commands{
+    # Testing Script
+    def openURLs(testBrowsers, urls)
+      testBrowsers.each do |browser|
+        urls.each do |address|
+          system %{open -a #{browser} #{address}}
+        end
+      end
+    end
+  }
+
+  # App instructions
+  desc "usage", "Detailed instructions and info"
+  def usage
+    @appCommand = "bearclaw"
+    @appSourceURI = "https://github.com/naomiyaki/#{@appCommand}"
+    @appInstructions = "
+    BearClaw Lickity Swoop Browser Testing
+    Usage: #{@appCommand} test [urls]<--(space separated list of urls) [options]
+
+    Currently, available browsers/browser locations are configured in source.
+    Thanks for trying out BearClaw! Source code and more info is available at #{@appSourceURI}"
+
+    puts @appInstructions
+  end
+
+  # List all available browsers
+  desc "list", "Lists all available browsers"
+  def list
+    @@browsers.each do |key, value|
+      puts "Flag: #{key} \t #{value}"
     end
   end
-  testBrowsers
-end
 
-def openURLs(selectedBrowsers, urls)
-  selectedBrowsers.each do |browser|
-    urls.each do |address|
-      system %{open -a #{browser} #{address}}
-    end
-  end
+# End of Thor class
 end
-
-# TODO
-# Separate methods for opening all, sepcific, none, and list  
-# Reduce global variables and stuff
 
 def run
-  if ARGV.length == 0
-    puts @appInstructions
-  elsif ARGV[0] == "all"
-    allBrowsers = []
-    @browsers.each_key {|key| allBrowsers.push(key)}
-    openURLs(selectBrowsers(allBrowsers), getUrls)
-  elsif ARGV[0] == "list"
-    listBrowsers
-  else
-    openURLs(selectBrowsers(ARGV), getUrls)
-  end
+  BearPaw.start(ARGV)
 end
 
 run
